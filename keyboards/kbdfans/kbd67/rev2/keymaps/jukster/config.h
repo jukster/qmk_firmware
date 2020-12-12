@@ -15,7 +15,4 @@
  */
 
 #pragma once
-
-// place overrides here
-//LSPO_KEYS=KC_LSFT,KC_LSFT,KC_8
-//RSPC_KEYS=KC_RSFT,KC_RSFT,KC_9
+#define TAPPING_TERM 200
