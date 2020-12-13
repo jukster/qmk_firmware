@@ -5,6 +5,8 @@ This layout works as the US Colemak layout, but can access Slovenian accented ch
 The keyboard has some other special features:
 
 - Split spacebar: function in the middle, enter on the right.
-- Fn key activates the second layer when held, and spotlight (cmd + space) when tapped.
+- Left Command key activates the second layer when held, and spotlight (cmd + space) when tapped.
+- FN key changes the layer permanently when double tapped
 - Space Cadet functionality, implemented with switching functions, not the default QMK one
 - Two media keys in the upper right corner.
+- Backlighting depending on layers and capslock.
