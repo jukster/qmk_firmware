@@ -23,12 +23,11 @@ uint16_t modspotlight_timer = 0;
 void add_to_prev(uint16_t kc);
 void unreg_prev(void);
 void timer_timeout(void);
-void timer_timeout_keymap(void);
 
 enum userspace_custom_keycodes {
   CU_QUOT, // placeholder keycode to allow for KC_QUOT be used for soft accented C
   CU_SCLN, // placeholder keycode to allow for KC_SCLN be used for accented C
-  CU_FN // keycode so that the fn key can also invoke spotlight
+  CU_LGUI // keycode so that the LGUI key can also invoke spotlight
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -50,7 +49,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), LALT(KC_BSLS), KC_PGUP,    \
   KC_BSPC, KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,                KC_ENT,  KC_PGDN,    \
   KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   KC_COMM, KC_DOT,  KC_MINS, KC_RSFT,                KC_UP,   KC_DEL,     \
-  KC_LCTL, KC_LALT, KC_LGUI,        KC_SPC,       CU_FN,        KC_ENT,      KC_RGUI, KC_RALT, KC_RCTL, KC_LEFT,       KC_DOWN, KC_RGHT),
+  KC_LCTL, KC_LALT, CU_LGUI,        KC_SPC,       TT(1),        KC_ENT,      KC_RGUI, KC_RALT, KC_RCTL, KC_LEFT,       KC_DOWN, KC_RGHT),
 
   /* Keymap Fn Layer
    * ,----------------------------------------------------------------.
@@ -66,11 +65,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `----------------------------------------------------------------'
    */
 [1] = LAYOUT_65_ansi_split_bs_split_spc(
-   _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_MUTE,KC_MPLY,_______, \
+
+_______,RGB_TOG,RGB_MOD,RGB_HUI,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_MUTE,KC_MPLY,_______, \
        _______,_______,_______,_______,_______,_______,_______,_______,  KC_UP,_______,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
          KC_CAPS,_______,_______,KC_LBRC,_______,_______,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
              _______,KC_BSLS,KC_QUOT,KC_SCLN,_______,_______,_______,_______,_______,_______,_______,      _______,KC_PGUP,_______, \
-     _______,_______,_______,        _______,    _______,     _______,             _______,_______,_______,_______,KC_PGDN,_______),
+     _______,_______,_______,        _______,    _______,     _______,             TG(1),_______,_______,_______,KC_PGDN,_______),
 
 };
 
@@ -363,19 +363,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       unregister_code(KC_6);
     }
     return false;
-  case CU_FN:
+  case CU_LGUI:
     if(record->event.pressed) {
       modspotlight = true;
       modspotlight_timer = timer_read();
-      layer_on(1);
-    } else {
+	  register_code(KC_LGUI);
+	  } else {
       if (timer_elapsed(modspotlight_timer) < TAPPING_TERM && modspotlight) {
-		register_code(KC_LGUI);
-        unregister_code(KC_SPC);
-        register_code(KC_SPC);
-        unregister_code(KC_LGUI);
-	}
-      layer_off(1);
+          unregister_code(KC_SPC);
+          register_code(KC_SPC);
+          unregister_code(KC_LGUI);
+  	  } else {
+	  unregister_code(KC_LGUI);		  
+  	  }
     }
     return false;
   case KC_7:
@@ -409,4 +409,43 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 	return true;
   }
+}
+
+// layer highlighting
+
+// Light LEDs 9 & 10 in cyan when keyboard layer 1 is active
+const rgblight_segment_t PROGMEM my_layer1_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 16, HSV_ORANGE}
+	);
+
+const rgblight_segment_t PROGMEM my_base_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 16, HSV_GREEN}
+	);
+	
+const rgblight_segment_t PROGMEM my_caps_lock_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 16, HSV_RED}
+	);
+	
+// Now define the array of layers. Later layers take precedence
+const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
+	my_base_layer,
+	my_layer1_layer,    // Overrides layer 1 lock layer
+	my_caps_lock_layer    // Overrides layer 1 lock layer
+);
+
+void keyboard_post_init_user(void) {
+    // Enable the LED layers
+    rgblight_layers = my_rgb_layers;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    // Both layers will light up if both kb layers are active
+    rgblight_set_layer_state(0, layer_state_cmp(state, 0));
+    rgblight_set_layer_state(1, layer_state_cmp(state, 1));
+    return state;
+}
+
+bool led_update_user(led_t led_state) {
+    rgblight_set_layer_state(2, led_state.caps_lock);
+    return true;
 }
