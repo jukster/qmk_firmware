@@ -27,7 +27,8 @@ void timer_timeout(void);
 enum userspace_custom_keycodes {
   CU_QUOT, // placeholder keycode to allow for KC_QUOT be used for soft accented C
   CU_SCLN, // placeholder keycode to allow for KC_SCLN be used for accented C
-  CU_LGUI // keycode so that the LGUI key can also invoke spotlight
+  CU_LGUI, // keycode so that the LGUI key can also invoke spotlight
+  CU_RGUI, // keycode so that the RGUI key can also invoke return
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -41,7 +42,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |----------------------------------------------------------------|
    * |Shift   |  Z|  X|  C|  V|  B|  K|  M|  ,|  .|  /|Shift | Up|End |
    * |----------------------------------------------------------------|
-   * |Ctrl|Alt |CMD | Space | Layer | Return |CMD|Alt|Ctrl|Lef|Dow|Rig|
+   * |Ctrl|Alt |CMD | SpaceFN|SpaceFN|SpaceFN|CMD|Alt|Ctrl|Lef|Dow|Rig|
    * `----------------------------------------------------------------'
    */
 [0] = LAYOUT_65_ansi_split_bs_split_spc(
@@ -49,9 +50,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), LALT(KC_BSLS), KC_PGUP,    \
   KC_BSPC, KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,                KC_ENT,  KC_PGDN,    \
   KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   KC_COMM, KC_DOT,  KC_MINS, KC_RSFT,                KC_UP,   KC_DEL,     \
-  KC_LCTL, KC_LALT, CU_LGUI,        KC_SPC,       TT(1),        KC_ENT,      KC_RGUI, KC_RALT, KC_RCTL, KC_LEFT,       KC_DOWN, KC_RGHT),
+  KC_LCTL, KC_LALT, CU_LGUI,      LT(2, KC_SPC),  LT(2, KC_SPC),  LT(2, KC_SPC),      CU_RGUI, KC_RALT, KC_RCTL, KC_LEFT,       KC_DOWN, KC_RGHT),
 
-  /* Keymap Fn Layer
+
+  /* Keymap fn_lock Layer
+   * ,----------------------------------------------------------------.
+   * |    |   |   |   |   |   |   |   |   |   |   |   |Mute| Play |   |
+   * |----------------------------------------------------------------|
+   * |     |   |MK1|MKU|MK2|   |   |PUp| Up |   |    |   |    |   |   |
+   * |----------------------------------------------------------------|
+   * | Caps |   |MKL|MKD|MKR|   |a(l)|lft|down|rght|a(r)|   |   |     |    
+   * |----------------------------------------------------------------|
+   * |        |   |   |   |   |   |   |PDn|   |   |   |      |PUp|    |
+   * |----------------------------------------------------------------|
+   * |    |    |    |      |       |        |   |   |    |   |PDn|    |
+   * `----------------------------------------------------------------'
+   */
+[1] = LAYOUT_65_ansi_split_bs_split_spc(
+
+_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______, \
+       _______,_______,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,_______,KC_PGUP,  KC_UP,_______,_______,_______,_______,_______,_______, \
+         _______,_______,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),_______,_______,_______, \
+             _______,_______,_______,_______,_______,_______,_______,KC_PGDN,_______,_______,_______,      _______,KC_PGUP,_______, \
+     _______,_______,_______,        LT(3, KC_SPC),  LT(3, KC_SPC),  LT(3, KC_SPC),             _______,_______,_______,_______,KC_PGDN,_______),
+
+
+  /* Keymap fn_tmp Layer
    * ,----------------------------------------------------------------.
    * |    |   |   |   |   |   |   |   |   |   |   |   |Mute| Play |   |
    * |----------------------------------------------------------------|
@@ -64,13 +88,35 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |    |    |    |      |       |        |   |   |    |   |PDn|    |
    * `----------------------------------------------------------------'
    */
-[1] = LAYOUT_65_ansi_split_bs_split_spc(
+[2] = LAYOUT_65_ansi_split_bs_split_spc(
 
 _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,RGB_TOG,KC_MUTE,KC_MPLY,_______, \
        _______,_______,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,_______,KC_PGUP,  KC_UP,_______,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
          KC_CAPS,_______,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
              _______,KC_BSLS,KC_QUOT,KC_SCLN,_______,_______,_______,KC_PGDN,_______,_______,_______,      _______,KC_PGUP,_______, \
-     _______,_______,_______,        _______,    _______,     _______,             TG(1),_______,_______,_______,KC_PGDN,_______),
+     _______,_______,_______,        _______,    _______,     _______,             TO(1),_______,_______,_______,KC_PGDN,_______),
+
+
+  /* Keymap fn_unlock Layer
+   * ,----------------------------------------------------------------.
+   * |    |   |   |   |   |   |   |   |   |   |   |   |Mute| Play |   |
+   * |----------------------------------------------------------------|
+   * |     |   |MK1|MKU|MK2|   |   |PUp| Up |   | š  | ž | ć  |   |   |
+   * |----------------------------------------------------------------|
+   * | Caps |   |MKL|MKD|MKR|   |a(l)|lft|down|rght|a(r)| č |   |     |    
+   * |----------------------------------------------------------------|
+   * |        | ž | ć | č |   |   |   |PDn|   |   |   |      |PUp|    |
+   * |----------------------------------------------------------------|
+   * |    |    |    |      |       |        |   |   |    |   |PDn|    |
+   * `----------------------------------------------------------------'
+   */
+[3] = LAYOUT_65_ansi_split_bs_split_spc(
+
+_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,RGB_TOG,KC_MUTE,KC_MPLY,_______, \
+       _______,_______,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,_______,KC_PGUP,  KC_UP,_______,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
+         KC_CAPS,_______,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
+             _______,KC_BSLS,KC_QUOT,KC_SCLN,_______,_______,_______,KC_PGDN,_______,_______,_______,      _______,KC_PGUP,_______, \
+     _______,_______,_______,        _______,    _______,     _______,             TO(0),_______,_______,_______,KC_PGDN,_______)
 
 };
 
@@ -378,7 +424,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   	  }
     }
     return false;
-  case KC_7:
+  case CU_RGUI:
+    if(record->event.pressed) {
+      modspotlight = true;
+      modspotlight_timer = timer_read();
+      } else {
+      if (timer_elapsed(modspotlight_timer) < TAPPING_TERM && modspotlight) {
+          unregister_code(KC_ENT);
+          register_code(KC_ENT);
+          unregister_code(KC_ENT);
+  	  } else {
+	  register_code(KC_RGUI);		  
+  	  }
+    }
+    return false;
+	case KC_7:
     SHIFT_NORM(KC_7, KC_6)
   case KC_8:
     SHIFT_NORM(KC_8, KC_EQL)
