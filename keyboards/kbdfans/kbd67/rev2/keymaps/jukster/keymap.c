@@ -66,9 +66,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
 [1] = LAYOUT_65_ansi_split_bs_split_spc(
 
-_______,RGB_TOG,RGB_MOD,RGB_HUI,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_MUTE,KC_MPLY,_______, \
-       _______,_______,KC_BTN1,KC_MS_U,KC_BTN2,_______,_______,KC_PGUP,  KC_UP,_______,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
-         KC_CAPS,_______,KC_MS_L,KC_MS_D,KC_MS_R,_______,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
+_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,RGB_TOG,KC_MUTE,KC_MPLY,_______, \
+       _______,_______,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,_______,KC_PGUP,  KC_UP,_______,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
+         KC_CAPS,_______,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
              _______,KC_BSLS,KC_QUOT,KC_SCLN,_______,_______,_______,KC_PGDN,_______,_______,_______,      _______,KC_PGUP,_______, \
      _______,_______,_______,        _______,    _______,     _______,             TG(1),_______,_______,_______,KC_PGDN,_______),
 
