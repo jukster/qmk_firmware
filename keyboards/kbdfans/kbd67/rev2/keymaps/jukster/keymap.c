@@ -20,6 +20,9 @@
 bool modspotlight = false;
 uint16_t modspotlight_timer = 0;
 
+bool modenter = false;
+uint16_t modenter_timer = 0;
+
 void add_to_prev(uint16_t kc);
 void unreg_prev(void);
 void timer_timeout(void);
@@ -426,15 +429,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return false;
   case CU_RGUI:
     if(record->event.pressed) {
-      modspotlight = true;
-      modspotlight_timer = timer_read();
+      modenter = true;
+      modenter_timer = timer_read();
+	  register_code(KC_RGUI);		  
       } else {
-      if (timer_elapsed(modspotlight_timer) < TAPPING_TERM && modspotlight) {
+      if (timer_elapsed(modenter_timer) < TAPPING_TERM && modenter) {
+    	  unregister_code(KC_RGUI);		  
           unregister_code(KC_ENT);
           register_code(KC_ENT);
           unregister_code(KC_ENT);
   	  } else {
-	  register_code(KC_RGUI);		  
+	  unregister_code(KC_RGUI);		  
   	  }
     }
     return false;
