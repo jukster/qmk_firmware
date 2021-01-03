@@ -20,59 +20,85 @@
 bool modspotlight = false;
 uint16_t modspotlight_timer = 0;
 
+bool modlayer = false;
+uint16_t modlayer_timer = 0;
+
 void add_to_prev(uint16_t kc);
 void unreg_prev(void);
 void timer_timeout(void);
 
 enum userspace_custom_keycodes {
-  CU_QUOT, // placeholder keycode to allow for KC_QUOT be used for soft accented C
+  CU_QUOT=SAFE_RANGE, // placeholder keycode to allow for KC_QUOT be used for soft accented C
   CU_SCLN, // placeholder keycode to allow for KC_SCLN be used for accented C
-  CU_LGUI // keycode so that the LGUI key can also invoke spotlight
+  CU_LGUI, // keycode so that the LGUI key can also invoke spotlight
+  CU_MOD // keycode to mod-tap to different layers
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap (Base Layer) Default Layer
    * ,----------------------------------------------------------------.
-   * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Vo+|Vo-|Bspc|
+   * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =| \| Vo+| Vo-|
    * |----------------------------------------------------------------|
-   * |Tab  |  Q|  W|  F|  P|  G|  J|  L|  U|  Y|  ;| [ | ] |  \  |PgUp|
+   * |Tab  |  Q|  W|  F|  P|  G|  J|  L|  U|  Y|  ;| [ | ] |Bspc |PgUp|
    * |----------------------------------------------------------------|
-   * |Caps   |  A|  R|  S|  T|  D|  H|  N|  E|  I|  O|  '|Return |PgDn|
+   * |Bspc(CTRL)|A|  R|  S|  T|  D|  H|  N|  E|  I|  O|  '|Return|PgDn|
    * |----------------------------------------------------------------|
-   * |Shift   |  Z|  X|  C|  V|  B|  K|  M|  ,|  .|  /|Shift | Up|End |
+   * |Shift   |  Z|  X|  C|  V|  B|  K|  M|  ,|  .|  /|Shift |Cmd| Del|
    * |----------------------------------------------------------------|
-   * |Ctrl|Alt |CMD | Space | Layer | Return |CMD|Alt|Ctrl|Lef|Dow|Rig|
+   * |Ctrl|Mod |CMD |         Space          |Mod|Alt|Lef|Dow| Up| Rig|
    * `----------------------------------------------------------------'
    */
 [0] = LAYOUT_65_ansi_split_bs(
-  KC_ESC,  KC_1,    KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  KC_VOLD, KC_VOLU, KC_BSPC, \
-  KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), LALT(KC_BSLS), KC_PGUP,    \
-  KC_BSPC, KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,                KC_ENT,  KC_PGDN,    \
-  KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   KC_COMM, KC_DOT,  KC_MINS, KC_RSFT,                KC_UP,   KC_DEL,     \
-  KC_LCTL, KC_LALT, CU_LGUI,               TT(1),      KC_RGUI, KC_RALT, KC_RCTL, KC_LEFT,       KC_DOWN, KC_RGHT),
+  KC_ESC,  KC_1,    KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  LALT(KC_BSLS), KC_VOLD, KC_VOLU, \
+  KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), KC_BSPC, KC_PGUP,    \
+  MT(MOD_LCTL, KC_BSPC), KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,                KC_ENT,  KC_PGDN,    \
+  KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   KC_COMM, KC_DOT,  KC_MINS, KC_RSFT,           KC_RGUI,   KC_DEL,     \
+  KC_LCTL, CU_MOD, CU_LGUI,                KC_SPC,           CU_MOD, KC_RALT,        KC_LEFT,       KC_DOWN, KC_UP, KC_RGHT),
 
-  /* Keymap Fn Layer
+  /* Keymap Mod lock Layer
    * ,----------------------------------------------------------------.
-   * |    |   |   |   |   |   |   |   |   |   |   |   |Mute| Play |   |
+   * |    |   |   |   |   |   |   |   |   |   |   |   |    |      |   |
    * |----------------------------------------------------------------|
-   * |     |   |MK1|MKU|MK2|   |   |PUp| Up |   | š  | ž | ć  |   |   |
+   * |     |   |MK1|MKU|MK2|   |   |PUp| Up |   |    |   |    |   |   |
    * |----------------------------------------------------------------|
-   * | Caps |   |MKL|MKD|MKR|   |a(l)|lft|down|rght|a(r)| č |   |     |    
+   * |      |   |MKL|MKD|MKR|   |a(l)|lft|down|rght|a(r)| č |   |     |    
    * |----------------------------------------------------------------|
-   * |        | ž | ć | č |   |   |   |PDn|   |   |   |      |PUp|    |
+   * |        |   |   |   |   |   |   |PDn|   |   |   |      |   |    |
    * |----------------------------------------------------------------|
-   * |    |    |    |      |       |        |   |   |    |   |PDn|    |
+   * |    |    |    |                       |   |   |    |   |   |    |
    * `----------------------------------------------------------------'
    */
 [1] = LAYOUT_65_ansi_split_bs(
 
-_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,RGB_TOG,KC_MUTE,KC_MPLY,_______, \
-       _______,_______,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,_______,KC_PGUP,  KC_UP,_______,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
-         KC_CAPS,_______,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
-             _______,KC_BSLS,KC_QUOT,KC_SCLN,_______,_______,_______,KC_PGDN,_______,_______,_______,      _______,KC_PGUP,_______, \
-     _______,_______,_______,                    _______,                         TG(1),_______,_______,_______,KC_PGDN,_______),
+_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
+       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
+         _______,XXXXXXX,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),XXXXXXX,_______,_______, \
+             _______,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,XXXXXXX,XXXXXXX,      _______,_______,_______, \
+     _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______),
 
-};
+  /* Keymap ModLayer
+   * ,----------------------------------------------------------------.
+   * |    |   |   |   |   |   |   |   |   |   |   |RGB|Mute|Pause|    |
+   * |----------------------------------------------------------------|
+   * |     |   |MK1|MKU|MK2|   |   |PUp| Up |   |  š | ž | ć  |   |   |
+   * |----------------------------------------------------------------|
+   * |      |   |MKL|MKD|MKR|   |a(l)|lft|down|rght|a(r)| č |   |     |    
+   * |----------------------------------------------------------------|
+   * |        |   |   |   |   |   |   |PDn|   |   |   |      |CAPS|   |
+   * |----------------------------------------------------------------|
+   * |    |    |    |        Enter          |   |   |    |   |   |    |
+   * `----------------------------------------------------------------'
+   */
+	 
+
+[2] = LAYOUT_65_ansi_split_bs(
+
+_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,RGB_TOG,KC_MUTE,KC_MPLY, \
+       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,XXXXXXX,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
+         _______,XXXXXXX,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
+             _______,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,XXXXXXX,XXXXXXX,      _______,_______,_______, \
+     _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______)	 
+ };
 
 void matrix_init_user(void) {
 }
@@ -140,6 +166,7 @@ void timer_timeout(void){
   lshiftp = false;
   rshiftp = false;
   modspotlight = false;
+  modlayer = false;
 }
 
 /*
@@ -378,6 +405,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   	  }
     }
     return false;
+  case CU_MOD:
+    if(record->event.pressed) {
+      modlayer = true;
+      modlayer_timer = timer_read();
+	  layer_on(2);
+	  } else {
+      if (timer_elapsed(modlayer_timer) < TAPPING_TERM && modlayer) {
+          layer_off(2);
+		  layer_invert(1);
+  	  } else {
+          layer_off(2);
+  	  }
+    }
+    return false;
   case KC_7:
     SHIFT_NORM(KC_7, KC_6)
   case KC_8:
@@ -414,22 +455,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // layer highlighting
 
 // Light LEDs 9 & 10 in cyan when keyboard layer 1 is active
+const rgblight_segment_t PROGMEM my_base_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 16, HSV_WHITE}
+	);
+	
 const rgblight_segment_t PROGMEM my_layer1_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {0, 16, HSV_ORANGE}
+    {0, 16, HSV_RED}
 	);
 
-const rgblight_segment_t PROGMEM my_base_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {0, 16, HSV_GREEN}
+const rgblight_segment_t PROGMEM my_layer2_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 16, HSV_ORANGE}
 	);
 	
 const rgblight_segment_t PROGMEM my_caps_lock_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {0, 16, HSV_RED}
+    {0, 16, HSV_PURPLE}
 	);
 	
 // Now define the array of layers. Later layers take precedence
 const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
 	my_base_layer,
 	my_layer1_layer,    // Overrides layer 1 lock layer
+	my_layer2_layer,    // Overrides layer 1 lock layer
 	my_caps_lock_layer    // Overrides layer 1 lock layer
 );
 
@@ -442,10 +488,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     // Both layers will light up if both kb layers are active
     rgblight_set_layer_state(0, layer_state_cmp(state, 0));
     rgblight_set_layer_state(1, layer_state_cmp(state, 1));
+    rgblight_set_layer_state(2, layer_state_cmp(state, 2));
     return state;
 }
 
 bool led_update_user(led_t led_state) {
-    rgblight_set_layer_state(2, led_state.caps_lock);
+    rgblight_set_layer_state(3, led_state.caps_lock);
     return true;
 }
