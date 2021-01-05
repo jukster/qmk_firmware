@@ -71,9 +71,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [1] = LAYOUT_65_ansi_split_bs(
 
 _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
-       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
+       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,LALT(KC_UP),XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
          _______,XXXXXXX,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),XXXXXXX,_______,_______, \
-             _______,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,XXXXXXX,XXXXXXX,      _______,_______,_______, \
+             _______,KC_Z,    KC_X,   KC_C,   KC_V,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,LALT(KC_DOWN),XXXXXXX,      _______,_______,_______, \
      _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______),
 
   /* Keymap ModLayer
@@ -94,9 +94,9 @@ _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,
 [2] = LAYOUT_65_ansi_split_bs(
 
 _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,RGB_TOG,KC_MUTE,KC_MPLY, \
-       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,XXXXXXX,KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
+       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,LALT(KC_UP),KC_LBRC,KC_BSLS,KC_QUOT,_______,_______, \
          _______,XXXXXXX,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
-             _______,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,XXXXXXX,XXXXXXX,      _______,_______,_______, \
+             _______,KC_Z,    KC_X,   KC_C,   KC_V,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,LALT(KC_DOWN),XXXXXXX,      _______,_______,_______, \
      _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______)	 
  };
 
