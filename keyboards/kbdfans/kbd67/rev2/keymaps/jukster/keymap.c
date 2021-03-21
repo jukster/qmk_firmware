@@ -28,10 +28,10 @@ void unreg_prev(void);
 void timer_timeout(void);
 
 enum userspace_custom_keycodes {
-  CU_QUOT=SAFE_RANGE, // placeholder keycode to allow for KC_QUOT be used for soft accented C
-  CU_SCLN, // placeholder keycode to allow for KC_SCLN be used for accented C
+  CU_SCLN=SAFE_RANGE, // placeholder keycode to allow for KC_SCLN be used for accented C
   CU_LGUI, // keycode so that the LGUI key can also invoke spotlight
-  CU_MOD // keycode to mod-tap to different layers
+  CU_COMM, // keycode so that the comma can be shifted to '
+  CU_DOT // keycode so that the dot can be shifted to "
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -50,9 +50,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
 [0] = LAYOUT_65_ansi_split_bs(
   KC_ESC,  KC_1,    KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  LALT(KC_BSLS), KC_VOLD, KC_VOLU, \
-  KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), KC_BSPC, KC_PGUP,    \
-  MT(MOD_LCTL, KC_BSPC), KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,                KC_ENT,  KC_PGDN,    \
-  KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   KC_COMM, KC_DOT,  KC_MINS, KC_RSFT,           KC_RGUI,   KC_DEL,     \
+  KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, KC_LBRC, KC_BSLS, KC_BSPC, KC_PGUP,    \
+  MT(MOD_LCTL, KC_BSPC), KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    KC_SCLN,                KC_ENT,  KC_PGDN,    \
+  KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   CU_COMM, CU_DOT,  KC_MINS, KC_RSFT,           KC_RGUI,   KC_DEL,     \
   KC_LCTL, MO(2), CU_LGUI,                KC_SPC,           MO(2), KC_RALT,        KC_LEFT,       KC_DOWN, KC_UP, KC_RGHT),
 
   /* Keymap Mod lock Layer
@@ -94,9 +94,9 @@ _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,
 [2] = LAYOUT_65_ansi_split_bs(
 
 TG(1),_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,RGB_TOG,KC_MUTE,KC_MPLY, \
-       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,LALT(KC_UP),KC_LBRC,KC_BSLS,KC_QUOT,______,_______, \
-         _______,KC_A,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_SCLN,_______,_______, \
-             _______,KC_Z,    KC_X,   KC_C,   KC_V,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,LALT(KC_DOWN),XXXXXXX,      _______,_______,_______, \
+       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,_______,_______,LALT(KC_LBRC), LALT(KC_RBRC),_______,_______, \
+         _______,KC_A,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_QUOT,_______,_______, \
+             _______,KC_Z,    KC_X,   KC_C,   KC_V,XXXXXXX,XXXXXXX,KC_PGDN,KC_GRV,S(KC_GRV),XXXXXXX,      _______,KC_CAPS,_______, \
      _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______)	 
  };
 
@@ -405,20 +405,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   	  }
     }
     return false;
-  case CU_MOD:
-    if(record->event.pressed) {
-      modlayer = true;
-      modlayer_timer = timer_read();
-	  layer_on(2);
-	  } else {
-      if (timer_elapsed(modlayer_timer) < TAPPING_TERM && modlayer) {
-          layer_off(2);
-		  layer_invert(1);
-  	  } else {
-          layer_off(2);
-  	  }
-    }
-    return false;
   case KC_7:
     SHIFT_NORM(KC_7, KC_6)
   case KC_8:
@@ -429,14 +415,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     SHIFT_NORM(KC_0, KC_9)
   case KC_EQL:
     SHIFT_SWITCH(KC_0, KC_EQL)
-  case CU_QUOT:
-    SHIFT_ALL(KC_7, KC_2)
   case CU_SCLN:
     SHIFT_ALL(KC_COMM, KC_DOT)
-  case KC_COMM:
-    SHIFT_NO(KC_COMM, KC_GRV)
-  case KC_DOT:
-  	SHIFT_NORM(KC_DOT, KC_GRV)
+  case CU_COMM:
+    SHIFT_NORM(KC_COMM, KC_7)
+  case CU_DOT:
+  	SHIFT_NORM(KC_DOT, KC_2)
   return true;
 
   default:
