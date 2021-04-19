@@ -72,9 +72,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
        _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,LALT(KC_UP),XXXXXXX,XXXXXXX,XXXXXXX,_______,_______, \
-         _______,KC_A,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),XXXXXXX,_______,_______, \
+         LM(0, MOD_LCTL),KC_A,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),XXXXXXX,_______,_______, \
              _______,KC_Z,    KC_X,   KC_C,   KC_V,XXXXXXX,XXXXXXX,KC_PGDN,XXXXXXX,LALT(KC_DOWN),XXXXXXX,      _______,_______,_______, \
-     _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______),
+     _______,_______,LM(3, MOD_LGUI),                    KC_ENT,                         _______,LM(0, MOD_LALT),_______,_______,_______,_______),
 
   /* Keymap ModLayer
    * ,----------------------------------------------------------------.
@@ -94,11 +94,32 @@ _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,
 [2] = LAYOUT_65_ansi_split_bs(
 
 TG(1),_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,RGB_TOG,KC_MUTE,KC_MPLY, \
-       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,_______,_______,LALT(KC_LBRC), LALT(KC_RBRC),_______,_______, \
+       _______,XXXXXXX,KC_BTN1,KC_MS_U,KC_BTN2,KC_WH_U,XXXXXXX,KC_PGUP,  KC_UP,_______,_______,LALT(KC_LBRC), LALT(KC_RBRC),KC_DEL,_______, \
          _______,KC_A,KC_MS_L,KC_MS_D,KC_MS_R,KC_WH_D,LALT(KC_LEFT),KC_LEFT,KC_DOWN,KC_RGHT,LALT(KC_RGHT),KC_QUOT,_______,_______, \
              _______,KC_Z,    KC_X,   KC_C,   KC_V,XXXXXXX,XXXXXXX,KC_PGDN,KC_GRV,S(KC_GRV),XXXXXXX,      _______,KC_CAPS,_______, \
-     _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______)	 
- };
+     _______,_______,_______,                    KC_ENT,                         _______,_______,_______,_______,_______,_______),
+ 
+ /* Keymap (Base Layer) Default Layer
+   * ,----------------------------------------------------------------.
+   * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =| \| Vo+| Vo-|
+   * |----------------------------------------------------------------|
+   * |Tab  |  Q|  W|  F|  P|  G|  J|  L|  U|  Y|  ;| [ | ] |Bspc |PgUp|
+   * |----------------------------------------------------------------|
+   * |Bspc(CTRL)|A|  R|  S|  T|  D|  H|  N|  E|  I|  O|  '|Return|PgDn|
+   * |----------------------------------------------------------------|
+   * |Shift   |  Z|  X|  C|  V|  B|  K|  M|  ,|  .|  /|Shift |Cmd| Del|
+   * |----------------------------------------------------------------|
+   * |Ctrl|Mod |CMD |         Space          |Mod|Alt|Lef|Dow| Up| Rig|
+   * `----------------------------------------------------------------'
+   */
+[3] = LAYOUT_65_ansi_split_bs(
+  KC_ESC,  KC_1,    KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  _______, _______, _______, \
+  KC_TAB,  KC_Q,    KC_W,   KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, KC_LBRC, KC_BSLS, KC_BSPC, KC_PGUP,    \
+  _______, KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    KC_SCLN,                KC_ENT,  KC_PGDN,    \
+  KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   CU_COMM, CU_DOT,  KC_MINS, KC_RSFT,           KC_RGUI,   KC_DEL,     \
+  _______,_______,_______,                KC_SPC,           _______, _______,        KC_LEFT,       KC_DOWN, KC_UP, KC_RGHT)
+
+};
 
 void matrix_init_user(void) {
 }
