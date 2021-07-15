@@ -91,7 +91,6 @@ _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,
    * `----------------------------------------------------------------'
    */
 
-
 [2] = LAYOUT_65_ansi_split_bs(
 
 TG(1),_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,XXXXXXX,XXXXXXX,RGB_TOG,KC_MUTE,KC_MPLY, \
@@ -360,7 +359,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed)
       timer_timeout();
     return true;
-
   case KC_LSFT:
     if(record->event.pressed) {
       lshiftp = true;
@@ -488,7 +486,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 const rgblight_segment_t PROGMEM my_base_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     {0, 16, HSV_WHITE}
 	);
-
 const rgblight_segment_t PROGMEM my_layer1_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     {0, 16, HSV_RED}
 	);
