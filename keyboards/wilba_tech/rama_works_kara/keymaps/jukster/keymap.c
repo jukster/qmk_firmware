@@ -17,95 +17,44 @@
 #include QMK_KEYBOARD_H
 
 
-// Interrupt and times for Mod/Spotlight
-bool modspotlight = false;
-uint16_t modspotlight_timer = 0;
-
-bool modlayer = false;
-uint16_t modlayer_timer = 0;
-
 void add_to_prev(uint16_t kc);
 void unreg_prev(void);
-void timer_timeout(void);
 
 enum userspace_custom_keycodes {
-  CU_SCLN=SAFE_RANGE, // placeholder keycode to allow for KC_SCLN be used for accented C
-  CU_LGUI, // keycode so that the LGUI key can also invoke spotlight
+  CU_CH = SAFE_RANGE, // keycode for the č expansion
   CU_QUOT, // keycode so that the ' key can be quote, shifted to double code
   CU_COMM, // keycode so that the comma can be shifted to '
   CU_DOT, // keycode so that the dot can be shifted to "
-  CU_LBRC, // keycode so that the dot can be shifted to "
-  CU_BSLS, // keycode so that the dot can be shifted to "
-  CU_SCLN2, // keycode so that the dot can be shifted to "
+  CU_SCLN,
+  CU_BSLS // keycode so that the dot can be shifted to "
 };
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 	// Default layer
 	[0] = LAYOUT_60_hhkb(
-		KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  LALT(KC_BSLS), TG(2),
-		KC_TAB,  KC_Q,    KC_W,    KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), KC_BSPC,
-		LT(3, KC_BSPC), KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,  KC_ENT,
-		KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   CU_COMM, CU_DOT,  KC_MINS, KC_RSFT,       KC_CAPS,
-				KC_LCTL, LM(1, MOD_LGUI),                            KC_SPC,                             KC_RALT, MO(3)),
-
-    // Slovene characters
-	[1] = LAYOUT_60_hhkb(
-		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______,_______, CU_LBRC,CU_BSLS, _______,
-		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, CU_SCLN2, _______,
-		_______, _______, _______, _______, _______, _______, _______, _______, _______,_______,_______, _______, _______,
-				_______, _______,                            _______,                    _______, _______),
-
-	// Mod Lock Layer
-	[2] = LAYOUT_60_hhkb(
-		  TG(2), _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, TG(2),
-		_______, _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______, XXXXXXX,   KC_UP, XXXXXXX, _______, _______,_______, _______,
-		KC_BSPC, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT), _______, _______,
-		_______,    KC_Z,    KC_X,    KC_C,    KC_V, _______, _______, _______,  KC_GRV,S(KC_GRV),_______, _______, _______,
-				LM(4, MOD_LCTL), LM(4, MOD_LGUI),                            _______,                   LM(4, MOD_LALT), _______ ),
+		KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  LALT(KC_BSLS), KC_DEL,
+		KC_TAB,  KC_Q,    KC_W,    KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, KC_LBRC, KC_BSLS, KC_BSPC,
+		LT(1, KC_BSPC), KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    KC_SCLN,  KC_ENT,
+		KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   CU_COMM, CU_DOT,  KC_MINS, KC_RSFT,       MO(2),
+				KC_LCTL, KC_LGUI,                            KC_SPC,                             KC_RALT, MO(1)),
 
     // Mod Layer
-	[3] = LAYOUT_60_hhkb(
-		  TG(6), _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_MPLY, KC_VOLD, KC_VOLU,
-		_______, _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______, XXXXXXX,   KC_UP, XXXXXXX, _______, _______, _______, KC_DEL,
-		KC_BSPC, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT),_______, _______,
-		_______,    KC_Z,    KC_X,    KC_C,    KC_V, _______, _______, _______,  KC_GRV,S(KC_GRV),_______, _______, MO(5),
-				_______, _______,                            KC_ENT,                            _______,_______ ),
+	[1] = LAYOUT_60_hhkb(
+		_______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_MPLY, KC_VOLD, KC_VOLU,
+		_______, KC_PGUP, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______, _______,   KC_UP, _______, _______, LALT(KC_LBRC), LALT(KC_RBRC), _______,
+		KC_CAPS, KC_PGDN, KC_MS_L, KC_MS_D, KC_MS_R, _______, (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT),_______, _______,
+		_______,    KC_Z,    KC_X,    KC_C,    KC_V, _______, _______, _______,  _______,_______,_______, _______,_______,
+				_______, _______,                            _______,                            _______,_______ ),
 
-    // Mod lock, lgui override to keep keyboard shortcuts, preveri detalje
-	[4] = LAYOUT_60_hhkb(
-		KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_SLSH, KC_EQL,  LALT(KC_BSLS), XXXXXXX,
-		KC_TAB,  KC_Q,    KC_W,    KC_F,   KC_P,   KC_G,   KC_J,   KC_L,   KC_U,    KC_Y,    CU_SCLN, LALT(KC_LBRC), LALT(KC_RBRC), KC_BSPC,
-		MT(MOD_LCTL, KC_BSPC), KC_A,    KC_R,   KC_S,   KC_T,   KC_D,   KC_H,   KC_N,   KC_E,    KC_I,    KC_O,    CU_QUOT,  KC_ENT,
-		KC_LSFT, KC_Z,    KC_X,   KC_C,   KC_V,   KC_B,   KC_K,   KC_M,   CU_COMM, CU_DOT,  KC_MINS, KC_RSFT,           XXXXXXX,
-				KC_LCTL, KC_LGUI,                            KC_SPC,                             KC_RALT,_______ ),
-
-
-	// Mod + Alt
-	[5] = LAYOUT_60_hhkb(
+    	// Mod + Alt
+	[2] = LAYOUT_60_hhkb(
 		_______, EF_DEC,  EF_INC,  H1_DEC,  H1_INC,  H2_DEC,  H2_INC,  _______, _______, _______, _______, BR_DEC,  BR_INC,  _______, _______,
 		_______, _______, _______, S1_DEC,  S1_INC,  S2_DEC,  S2_INC,  _______, _______, _______, _______, ES_DEC,  ES_INC,  _______,
 		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_QUOT, _______,
 		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
 				_______, _______,                            _______,                            _______, _______),
 
-	// Qwerty
-	[6] = LAYOUT_60_hhkb(
-		KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSLS, KC_DEL,
-		KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_UP,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSPC,
-		KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_LEFT,    KC_DOWN,    KC_RGHT,    KC_SCLN, KC_QUOT, KC_ENT,
-		KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, _______,
-				KC_LCTL, KC_LGUI,                            KC_SPC,                             KC_RALT, MO(7)),
-
-	// Disable qwerty
-	[7] = LAYOUT_60_hhkb(
-		TG(6), _______,  _______,  _______,  _______,  _______,  _______,  _______, _______, _______, _______, _______,  _______,  _______, _______,
-		_______, _______, _______, _______,  _______,  _______,  _______,  _______, _______, _______, _______, _______,  _______,  _______,
-		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-				_______, _______,                            _______,                            _______, _______)
 };
 
 
@@ -118,12 +67,6 @@ void matrix_scan_user(void) {
 // state of physical shift
 bool lshift = false;
 bool rshift = false;
-
-// Interrupt and times for space cadet shift
-bool lshiftp = false;
-bool rshiftp = false;
-uint16_t lshift_timer = 0;
-uint16_t rshift_timer = 0;
 
 // Number of items that are saved in prev_kcs
 uint8_t prev_indx = 0;
@@ -167,14 +110,6 @@ void unreg_prev(void){
   prev_indx = 0;
 }
 
-// Interrupts all timers
-void timer_timeout(void){
-  lshiftp = false;
-  rshiftp = false;
-  modspotlight = false;
-  modlayer = false;
-}
-
 /*
 Templates for Keys, with custom shifted and non shifted Characters
 */
@@ -182,7 +117,6 @@ Templates for Keys, with custom shifted and non shifted Characters
 // Normal shift status. Used when both the ansi keycode is non shifted, and the non shifted result is, but the shifted result is obtained by shifting a different ansi keycode
 #define SHIFT_NORM(kc1, kc2) \
 if (record->event.pressed) { \
-  timer_timeout(); \
   if (lshift || rshift) { \
     register_code(KC_LSFT); \
     unregister_code(kc2); \
@@ -202,7 +136,6 @@ return false;
 // Inverted shift status. Used when you need to send a non-shifted keycode as a result of physically pressing shift
 #define SHIFT_SWITCH(kc1, kc2) \
 if (record->event.pressed) { \
-  timer_timeout(); \
   if (lshift || rshift) { \
     unregister_code(KC_LSFT); \
     unregister_code(kc2); \
@@ -228,7 +161,6 @@ return false;
 // Always shifted, Used when both the keycodes are shifted, regardless of physical state
 #define SHIFT_ALL(kc1, kc2) \
 if (record->event.pressed) { \
-  timer_timeout(); \
   register_code(KC_LSFT); \
   if (lshift || rshift) { \
     unregister_code(kc2); \
@@ -253,7 +185,6 @@ return false;
 // Never shifted. Used when both the keycodes are unshifted, regardless of physical state
 #define SHIFT_NO(kc1, kc2) \
 if (record->event.pressed) { \
-  timer_timeout(); \
   unregister_code(KC_LSFT); \
   if (lshift || rshift) { \
     unregister_code(kc2); \
@@ -277,7 +208,6 @@ return false;
 // Always AltGr
 #define SHIFT_ALGR(kc1, kc2) \
 if (record->event.pressed) { \
-  timer_timeout(); \
   unregister_code(KC_LSFT); \
   register_code(KC_ALGR); \
   if (lshift || rshift) { \
@@ -297,7 +227,6 @@ return false;
 // Different keycode when Ctrl is pressed
 #define CTRL(kc1, kc2) \
 if(record->event.pressed) { \
-  timer_timeout(); \
   if (lshift || rshift) \
     register_code(KC_LSFT); \
   else \
@@ -316,27 +245,13 @@ return false;
 // process record user
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-  case KC_LGUI:
-  case KC_RGUI:
-    if (record->event.pressed)
-      timer_timeout();
-    return true;
-
-  case KC_LSFT:
+    switch (keycode) {
+    case KC_LSFT:
     if(record->event.pressed) {
-      lshiftp = true;
-      lshift_timer = timer_read();
       unregister_code(KC_LSFT);
       register_code(KC_LSFT);
       lshift = true;
     } else {
-      if (timer_elapsed(lshift_timer) < TAPPING_TERM && lshiftp) {
-        register_code(KC_LSFT);
-        register_code(KC_8);
-        unregister_code(KC_8);
-        unregister_code(KC_LSFT);
-      }
       unreg_prev();
       if (!rshift)
         unregister_code(KC_LSFT);
@@ -345,27 +260,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return false;
   case KC_RSFT:
     if(record->event.pressed) {
-      rshiftp = true;
-      rshift_timer = timer_read();
       unregister_code(KC_LSFT);
       register_code(KC_LSFT);
       rshift = true;
     } else {
-      if (timer_elapsed(rshift_timer) < TAPPING_TERM && rshiftp) {
-        register_code(KC_LSFT);
-        register_code(KC_9);
-        unregister_code(KC_9);
-        unregister_code(KC_LSFT);
-      }
       unreg_prev();
       if (!lshift)
         unregister_code(KC_LSFT);
       rshift = false;
     }
     return false;
-  case KC_2:
+        case KC_2:
     if(record->event.pressed){
-      timer_timeout();
       unregister_code(KC_LSFT);
       if (lshift || rshift){
 		register_code(KC_LSFT);
@@ -380,9 +286,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       unregister_code(KC_2);
     }
     return false;
-  case KC_6:
+    case KC_6:
     if(record->event.pressed){
-      timer_timeout();
       unregister_code(KC_LSFT);
       if (lshift || rshift){
 		register_code(KC_LALT);
@@ -396,61 +301,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       unregister_code(KC_6);
     }
     return false;
-  case CU_LGUI:
-    if(record->event.pressed) {
-      modspotlight = true;
-      modspotlight_timer = timer_read();
-      layer_on(1);
-	  register_code(KC_LGUI);
-	  } else {
-      if (timer_elapsed(modspotlight_timer) < TAPPING_TERM && modspotlight) {
-          unregister_code(KC_SPC);
-          register_code(KC_SPC);
-          unregister_code(KC_LGUI);
-          layer_off(1);
-  	  } else {
-	  unregister_code(KC_LGUI);
-      layer_off(1);
-  	  }
-    }
-    return false;
-
-  case CU_SCLN2:
-    if(record->event.pressed) {
-      unregister_code(KC_LGUI);
-      layer_off(1);
-	  register_code(KC_SCLN);
-	  } else {
-	  register_code(KC_LGUI);
-      unregister_code(KC_SCLN);
-      layer_on(1);
-  	  }
-    return false;
-
-  case CU_BSLS:
-    if(record->event.pressed) {
-      unregister_code(KC_LGUI);
-      layer_off(1);
-	  register_code(KC_BSLS);
-	  } else {
-	  register_code(KC_LGUI);
-      unregister_code(KC_BSLS);
-      layer_on(1);
-  	  }
-    return false;
-
-  case CU_LBRC:
-    if(record->event.pressed) {
-      unregister_code(KC_LGUI);
-      layer_off(1);
-	  register_code(KC_LBRC);
-	  } else {
-	  register_code(KC_LGUI);
-      unregister_code(KC_LBRC);
-      layer_on(1);
-  	  }
-    return false;
-  case KC_7:
+    case KC_7:
     SHIFT_NORM(KC_7, KC_6)
   case KC_8:
     SHIFT_NORM(KC_8, KC_EQL)
@@ -468,17 +319,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   	SHIFT_NORM(KC_DOT, KC_2)
   case CU_QUOT:
     SHIFT_ALL(KC_7, KC_2)
-  return true;
 
-  default:
-    if(record->event.pressed) {
-      timer_timeout();
-
-      if (lshift || rshift)
-        register_code(KC_LSFT);
-      else
-        unregister_code(KC_LSFT);
     }
-	return true;
-  }
-}
+
+return true;
+};
