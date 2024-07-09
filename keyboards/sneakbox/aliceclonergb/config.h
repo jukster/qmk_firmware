@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DIODE_DIRECTION COL2ROW
 
 /* Set 0 if debouncing isn't needed */
-#define DEBOUNCE 5
+#define DEBOUNCE 10
 
 #define LED_NUM_LOCK_PIN  D4
 #define LED_CAPS_LOCK_PIN D6
