@@ -37,23 +37,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [1] = LAYOUT_alice_split_bs( /* FN */
     TG(1), _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,          KC_F7,   KC_F8,   KC_F9,   KC_F10, KC_VOLD, KC_VOLU, KC_MPLY, KC_MPLY,
-    KC_UP, _______, _______, KC_BTN1, KC_MS_U, KC_BTN2, _______,                 _______, _______, KC_UP, _______, _______, _______, _______, KC_DEL,
-    KC_DOWN, KC_CAPS, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______,                 (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT),_______,          _______,
-             _______, KC_Z,    KC_X,    KC_C,    KC_V, _______,                 LALT(KC_RBRC), _______, _______, KC_GRV, RSFT(KC_GRV),  _______, _______, _______,
+    KC_UP, _______, _______, MS_BTN1, MS_UP,   MS_BTN2, _______,                 _______, _______, KC_UP, _______, _______, _______, _______, KC_DEL,
+    KC_DOWN, KC_CAPS, _______, MS_LEFT, MS_DOWN, MS_RGHT, _______,                 (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT),_______,          _______,
+             _______, KC_Z,    KC_X,    KC_C,    KC_V, _______,                 LALT(KC_RBRC), _______, _______, KC_NUBS, RSFT(KC_NUBS),  _______, _______, _______,
              _______,          _______,          _______, _______,                 KC_ENT,          _______,                            _______),
 
 [2] = LAYOUT_alice_split_bs( /* FN */
     TG(2), _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,          KC_F7,   KC_F8,   KC_F9,   KC_F10, KC_VOLD, KC_VOLU, KC_MPLY, KC_MPLY,
-    KC_UP, _______, _______, KC_BTN1, KC_MS_U, KC_BTN2, _______,                 _______, _______, KC_UP, _______, _______, _______, _______, KC_DEL,
-    KC_DOWN, KC_CAPS, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______,                 (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT),_______,          _______,
-             _______, KC_Z,    KC_X,    KC_C,    KC_V, _______,                 LALT(KC_RBRC), _______, _______, KC_GRV, RSFT(KC_GRV),  _______, _______, TG(3),
+    KC_UP, _______, _______, MS_BTN1, MS_UP,   MS_BTN2, _______,                 _______, _______, KC_UP, _______, _______, _______, _______, KC_DEL,
+    KC_DOWN, KC_CAPS, _______, MS_LEFT, MS_DOWN, MS_RGHT, _______,                 (LALT(KC_LEFT)), KC_LEFT, KC_DOWN, KC_RGHT, LALT(KC_RGHT),_______,          _______,
+             _______, KC_Z,    KC_X,    KC_C,    KC_V, _______,                 LALT(KC_RBRC), _______, _______, KC_NUBS, RSFT(KC_NUBS),  _______, _______, TG(3),
              _______,          _______,          _______, _______,                 KC_ENT,          _______,                            _______),
 
 [3] = LAYOUT_alice_split_bs( /* FN */
     TG(3),   KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,         KC_NO,     KC_NO,     KC_NO,    KC_NO,       KC_NO,      KC_NO,      KC_NO,
-    KC_NO,     KC_NO,     KC_NO,   KC_NO,     KC_NO,   KC_NO,   KC_NO,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,     RGB_RMOD,   RGB_MOD,    RGB_TOG,
-    KC_NO,       KC_NO,     KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,      RGB_VAD,   RGB_VAI,    KC_NO,
-                KC_NO,     KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,      RGB_SAD,   RGB_SAI,    KC_NO,      RGB_HUI,
+    KC_NO,     KC_NO,     KC_NO,   KC_NO,     KC_NO,   KC_NO,   KC_NO,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,     UG_PREV,   UG_NEXT,   UG_TOGG,
+    KC_NO,       KC_NO,     KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,      UG_VALD,   UG_VALU,   KC_NO,
+                KC_NO,     KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,                         KC_NO,   KC_NO,   KC_NO,   KC_NO,      UG_SATD,   UG_SATU,   KC_NO,      UG_HUEU,
                 KC_NO,                       KC_NO,   KC_NO,   KC_NO,                       KC_NO,   KC_NO,                                               KC_TRNS)
 };
 
@@ -372,5 +372,3 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     rgblight_set_layer_state(2, layer_state_cmp(state, 2));
     return state;
 }
-
-
